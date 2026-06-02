@@ -1,122 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect, useState } from 'react'
+import type { DocFormat, HistoryItem } from './types'
+import { HomeScreen, type OpenPayload } from './components/HomeScreen'
+import { PreviewScreen } from './components/PreviewScreen'
+import { ThemeToggle } from './components/ThemeToggle'
+import { addHistory, listHistory, deleteHistory } from './lib/history'
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+interface Current {
+  format: DocFormat
+  content: string
+  isBinary: boolean
 }
 
-export default App
+export default function App() {
+  const [current, setCurrent] = useState<Current | null>(null)
+  const [history, setHistory] = useState<HistoryItem[]>([])
+
+  async function refresh() {
+    setHistory(await listHistory())
+  }
+  useEffect(() => {
+    void refresh()
+  }, [])
+
+  async function open(p: OpenPayload) {
+    setCurrent({ format: p.format, content: p.content, isBinary: p.isBinary })
+    await addHistory({ format: p.format, content: p.content, isBinary: p.isBinary, title: p.title })
+    await refresh()
+  }
+
+  return (
+    <div className="app">
+      <header className="app-header">
+        <span className="app-title">MobileMD</span>
+        <ThemeToggle />
+      </header>
+      {current ? (
+        <PreviewScreen
+          format={current.format}
+          content={current.content}
+          isBinary={current.isBinary}
+          onBack={() => setCurrent(null)}
+          onChangeFormat={(f) => setCurrent({ ...current, format: f })}
+        />
+      ) : (
+        <HomeScreen
+          onOpen={open}
+          history={history}
+          onPick={(item) =>
+            setCurrent({ format: item.format, content: item.content, isBinary: item.isBinary })
+          }
+          onDelete={async (id) => {
+            await deleteHistory(id)
+            await refresh()
+          }}
+        />
+      )}
+    </div>
+  )
+}
