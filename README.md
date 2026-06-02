@@ -1,73 +1,40 @@
-# React + TypeScript + Vite
+# MobileMD
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+在手机浏览器里预览 Markdown / JSON / HTML / PDF 文件与粘贴文本。纯前端 PWA，文件仅在本地处理，不上传任何服务器。
 
-Currently, two official plugins are available:
+## 功能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Markdown**：GFM 表格/任务清单、代码高亮、LaTeX 公式、Mermaid 图表
+- **JSON**：可折叠树状视图，解析失败有友好提示
+- **HTML**：沙盒渲染（禁脚本，只看排版与样式）
+- **PDF**：翻页 / 缩放浏览
+- 粘贴文本自动识别格式；选择本地文件打开；历史记录保存在本地（IndexedDB）
+- 深 / 浅色主题（跟随系统，可手动切换）
+- 可装到手机主屏，离线使用
 
-## React Compiler
+## 隐私
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+所有文件只在你的设备本地处理，不会上传到任何服务器。没有后端、没有账号、没有追踪。
 
-## Expanding the ESLint configuration
+## 本地开发
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev      # 启动开发服务器
+npm test         # 运行测试
+npm run build    # 生产构建
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 部署
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+推送到 `main` 分支后，由 GitHub Actions 自动构建并发布到 GitHub Pages。
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+> 仓库名需为 `md-html-viewer`，与 `vite.config.ts` 中的 `base` 一致；如改用其他仓库名，请同步修改 `base`。
+
+## 技术栈
+
+React + Vite + TypeScript，react-markdown、pdf.js、vite-plugin-pwa。
+
+## License
+
+MIT
