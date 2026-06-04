@@ -104,16 +104,17 @@ describe('PreviewScreen edit mode (markdown only)', () => {
     await waitFor(() => expect(onSave).toHaveBeenCalledWith('# 改了', 'overwrite', undefined))
   })
 
-  it('另存为新条调用 onSave new 并带标题', async () => {
+  it('另存为新条调用 onSave new 并带标题（保存编辑后的内容）', async () => {
     const onSave = vi.fn().mockResolvedValue(undefined)
     renderMd(onSave)
     fireEvent.click(screen.getByRole('button', { name: /编辑/ }))
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '# 改了内容' } })
     fireEvent.click(screen.getByRole('button', { name: /保存/ }))
     const titleInput = screen.getByDisplayValue(/已编辑/)
     fireEvent.change(titleInput, { target: { value: '我的新标题' } })
     fireEvent.click(screen.getByRole('button', { name: /另存为新条/ }))
     await waitFor(() => expect(onSave).toHaveBeenCalledWith(
-      '# 标题\n这是 ==高亮== 文字',
+      '# 改了内容',
       'new',
       '我的新标题',
     ))

@@ -182,8 +182,9 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
                 <p className="save-dialog-title">保存方式</p>
                 <button onClick={confirmOverwrite}>覆盖原条</button>
                 <div className="save-dialog-divider">或</div>
-                <label className="save-dialog-label">另存为新条</label>
+                <label className="save-dialog-label" htmlFor="save-title-input">另存为新条</label>
                 <input
+                  id="save-title-input"
                   className="save-dialog-input"
                   value={saveTitle}
                   onChange={(e) => setSaveTitle(e.target.value)}
