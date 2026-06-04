@@ -4,9 +4,10 @@ import { HomeScreen, type OpenPayload } from './components/HomeScreen'
 import { PreviewScreen } from './components/PreviewScreen'
 import { ThemeToggle } from './components/ThemeToggle'
 import { ErrorBoundary } from './components/ErrorBoundary'
-import { addHistory, listHistory, deleteHistory } from './lib/history'
+import { addHistory, listHistory, deleteHistory, updateHistory } from './lib/history'
 
 interface Current {
+  id: string | null
   format: DocFormat
   content: string
   isBinary: boolean
@@ -24,8 +25,24 @@ export default function App() {
   }, [])
 
   async function open(p: OpenPayload) {
-    setCurrent({ format: p.format, content: p.content, isBinary: p.isBinary })
-    await addHistory({ format: p.format, content: p.content, isBinary: p.isBinary, title: p.title })
+    const saved = await addHistory({ format: p.format, content: p.content, isBinary: p.isBinary, title: p.title })
+    setCurrent({ id: saved.id, format: p.format, content: p.content, isBinary: p.isBinary })
+    await refresh()
+  }
+
+  async function handleSave(draft: string, mode: 'overwrite' | 'new', title?: string) {
+    if (mode === 'overwrite' && current!.id) {
+      await updateHistory(current!.id, draft)
+      setCurrent({ ...current!, content: draft })
+    } else {
+      const saved = await addHistory({
+        format: 'markdown',
+        content: draft,
+        isBinary: false,
+        title: title ?? '已编辑',
+      })
+      setCurrent({ id: saved.id, format: 'markdown', content: draft, isBinary: false })
+    }
     await refresh()
   }
 
@@ -41,8 +58,10 @@ export default function App() {
             format={current.format}
             content={current.content}
             isBinary={current.isBinary}
+            historyId={current.id}
             onBack={() => setCurrent(null)}
             onChangeFormat={(f) => setCurrent({ ...current, format: f })}
+            onSave={handleSave}
           />
         </ErrorBoundary>
       ) : (
@@ -50,7 +69,7 @@ export default function App() {
           onOpen={open}
           history={history}
           onPick={(item) =>
-            setCurrent({ format: item.format, content: item.content, isBinary: item.isBinary })
+            setCurrent({ id: item.id, format: item.format, content: item.content, isBinary: item.isBinary })
           }
           onDelete={async (id) => {
             await deleteHistory(id)

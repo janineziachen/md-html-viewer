@@ -9,13 +9,15 @@ interface Props {
   format: DocFormat
   content: string
   isBinary: boolean
+  historyId: string | null
   onBack: () => void
   onChangeFormat: (f: DocFormat) => void
+  onSave: (draft: string, mode: 'overwrite' | 'new', title?: string) => Promise<void>
 }
 
 const FORMATS: DocFormat[] = ['markdown', 'json', 'html', 'pdf']
 
-export function PreviewScreen({ format, content, onBack, onChangeFormat }: Props) {
+export function PreviewScreen({ format, content, isBinary: _isBinary, historyId: _historyId, onBack, onChangeFormat, onSave: _onSave }: Props) {
   const [scale, setScale] = useState(1)
   const showZoom = format === 'markdown' || format === 'json'
   return (
