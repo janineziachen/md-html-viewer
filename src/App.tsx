@@ -3,6 +3,7 @@ import type { DocFormat, HistoryItem } from './types'
 import { HomeScreen, type OpenPayload } from './components/HomeScreen'
 import { PreviewScreen } from './components/PreviewScreen'
 import { ThemeToggle } from './components/ThemeToggle'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { addHistory, listHistory, deleteHistory } from './lib/history'
 
 interface Current {
@@ -35,13 +36,15 @@ export default function App() {
         <ThemeToggle />
       </header>
       {current ? (
-        <PreviewScreen
-          format={current.format}
-          content={current.content}
-          isBinary={current.isBinary}
-          onBack={() => setCurrent(null)}
-          onChangeFormat={(f) => setCurrent({ ...current, format: f })}
-        />
+        <ErrorBoundary resetKey={`${current.format}:${current.content}`} onReset={() => setCurrent(null)}>
+          <PreviewScreen
+            format={current.format}
+            content={current.content}
+            isBinary={current.isBinary}
+            onBack={() => setCurrent(null)}
+            onChangeFormat={(f) => setCurrent({ ...current, format: f })}
+          />
+        </ErrorBoundary>
       ) : (
         <HomeScreen
           onOpen={open}

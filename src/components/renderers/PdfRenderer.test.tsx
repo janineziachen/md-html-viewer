@@ -17,4 +17,10 @@ describe('PdfRenderer', () => {
     render(<PdfRenderer dataUrl="data:application/pdf;base64,AAAA" />)
     expect(await screen.findByText(/第/)).toBeInTheDocument()
   })
+
+  it('非法 base64 内容不崩溃，显示错误提示', async () => {
+    // 复现 bug：把含非法 base64 字符的文本（如 markdown）当 PDF 渲染
+    render(<PdfRenderer dataUrl="# 这是 markdown，不是 PDF 内容（含逗号,与中文）" />)
+    expect(await screen.findByText(/无法加载 PDF/)).toBeInTheDocument()
+  })
 })

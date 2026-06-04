@@ -13,12 +13,21 @@ export function PdfRenderer({ dataUrl }: Props) {
   const [page, setPage] = useState(1)
   const [total, setTotal] = useState(0)
   const [scale, setScale] = useState(1.2)
+  const [error, setError] = useState(false)
   const docRef = useRef<pdfjs.PDFDocumentProxy | null>(null)
 
   useEffect(() => {
     let cancelled = false
-    const data = atob(dataUrl.split(',')[1] ?? '')
-    const bytes = Uint8Array.from(data, (c) => c.charCodeAt(0))
+    setError(false)
+    let bytes: Uint8Array
+    try {
+      const base64 = dataUrl.split(',')[1] ?? ''
+      const data = atob(base64)
+      bytes = Uint8Array.from(data, (c) => c.charCodeAt(0))
+    } catch {
+      setError(true)
+      return
+    }
     pdfjs
       .getDocument({ data: bytes })
       .promise.then((doc) => {
@@ -26,7 +35,9 @@ export function PdfRenderer({ dataUrl }: Props) {
         docRef.current = doc
         setTotal(doc.numPages)
       })
-      .catch(() => {})
+      .catch(() => {
+        if (!cancelled) setError(true)
+      })
     return () => {
       cancelled = true
     }
@@ -54,7 +65,11 @@ export function PdfRenderer({ dataUrl }: Props) {
 
   return (
     <div className="pdf-body">
-      <div className="pdf-toolbar">
+      {error ? (
+        <div className="pdf-error">无法加载 PDF。该内容可能不是有效的 PDF 文件。</div>
+      ) : (
+        <>
+          <div className="pdf-toolbar">
         <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}>
           上一页
         </button>
@@ -66,8 +81,10 @@ export function PdfRenderer({ dataUrl }: Props) {
         </button>
         <button onClick={() => setScale((s) => s + 0.2)}>放大</button>
         <button onClick={() => setScale((s) => Math.max(0.4, s - 0.2))}>缩小</button>
-      </div>
-      <canvas ref={canvasRef} className="pdf-canvas" />
+          </div>
+          <canvas ref={canvasRef} className="pdf-canvas" />
+        </>
+      )}
     </div>
   )
 }
