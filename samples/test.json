@@ -1,0 +1,23 @@
+{
+  "name": "MobileMD",
+  "version": "1.0.0",
+  "mobile": true,
+  "formats": ["markdown", "json", "html", "pdf"],
+  "config": {
+    "theme": "system",
+    "fontScale": 1.0,
+    "offline": true
+  },
+  "history": [
+    { "id": "a1", "title": "测试文档", "format": "markdown" },
+    { "id": "b2", "title": "数据样本", "format": "json" }
+  ],
+  "中文键": "中文值",
+  "nested": {
+    "deep": {
+      "array": [1, 2, 3, [4, 5], { "k": "v" }],
+      "nullable": null,
+      "flag": false
+    }
+  }
+}

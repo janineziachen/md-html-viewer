@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <title>HTML 测试页</title>
+  <style>
+    h1 { color: #2563eb; }
+    .box { padding: 12px; border: 1px solid #ccc; border-radius: 8px; }
+    table { border-collapse: collapse; }
+    td, th { border: 1px solid #999; padding: 6px 10px; }
+    .wide { width: 2000px; background: linear-gradient(90deg,#f00,#00f); height: 20px; }
+  </style>
+</head>
+<body>
+  <h1>HTML 渲染测试</h1>
+  <p>这是一段正文，包含<strong>加粗</strong>和<a href="https://example.com">外部链接</a>（点击应在新标签打开，不会清空预览）。</p>
+  <div class="box">一个带边框的盒子。</div>
+  <h2>表格</h2>
+  <table>
+    <tr><th>列A</th><th>列B</th></tr>
+    <tr><td>1</td><td>2</td></tr>
+  </table>
+  <h2>超宽元素（测试不被裁切，可横向滚动）</h2>
+  <div class="wide"></div>
+  <h2>脚本（sandbox 允许脚本运行）</h2>
+  <p id="js-out">脚本未运行</p>
+  <script>
+    document.getElementById('js-out').textContent = '脚本已运行 ✓ 时间: ' + new Date().toLocaleTimeString();
+  </script>
+</body>
+</html>

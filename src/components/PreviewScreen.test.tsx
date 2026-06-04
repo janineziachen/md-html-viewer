@@ -17,12 +17,21 @@ describe('PreviewScreen', () => {
     expect(screen.getAllByText(/k/).length).toBeGreaterThan(0)
   })
 
-  it('点返回触发 onBack', () => {
+  it('点顶部返回触发 onBack', () => {
     let backed = false
     render(
       <PreviewScreen format="markdown" content="# a" isBinary={false} onBack={() => { backed = true }} onChangeFormat={() => {}} />,
     )
-    screen.getByRole('button', { name: /返回/ }).click()
+    screen.getByRole('button', { name: '返回' }).click()
+    expect(backed).toBe(true)
+  })
+
+  it('点底部返回主页触发 onBack', () => {
+    let backed = false
+    render(
+      <PreviewScreen format="markdown" content="# a" isBinary={false} onBack={() => { backed = true }} onChangeFormat={() => {}} />,
+    )
+    screen.getByRole('button', { name: '← 返回主页' }).click()
     expect(backed).toBe(true)
   })
 })

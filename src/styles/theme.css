@@ -205,13 +205,24 @@ select {
   z-index: 5;
 }
 .preview-content {
-  flex: 1;
+  flex: 1 0 auto;
   padding: 16px;
   padding-bottom: max(16px, env(safe-area-inset-bottom));
-  overflow-x: auto;
   overflow-wrap: break-word;
   word-break: break-word;
-  -webkit-overflow-scrolling: touch;
+}
+.preview-footer {
+  flex: none;
+  padding: 16px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid var(--border);
+}
+.back-home {
+  width: 100%;
+  max-width: 320px;
+  padding: 12px;
 }
 
 /* ---- Error fallback ---- */
@@ -315,6 +326,38 @@ select {
   font-size: 0.875em;
   -webkit-overflow-scrolling: touch;
 }
+.html-view {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.html-view-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.html-view-bar button {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+.html-view-hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+.html-frame-wrap {
+  width: 100%;
+}
+.html-frame-wrap--desktop {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.html-frame-wrap--desktop .html-frame {
+  border: 0;
+  border-radius: 0;
+}
 .html-frame {
   width: 100%;
   height: 78vh;
@@ -336,8 +379,15 @@ select {
   justify-content: center;
   gap: 8px;
 }
+.pdf-canvas-wrap {
+  width: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  justify-content: center;
+}
 .pdf-canvas {
-  max-width: 100%;
+  display: block;
   height: auto;
   border: 1px solid var(--border);
   border-radius: 6px;

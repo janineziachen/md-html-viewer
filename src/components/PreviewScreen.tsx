@@ -62,6 +62,11 @@ export function PreviewScreen({ format, content, onBack, onChangeFormat }: Props
         {format === 'html' && <HtmlRenderer content={content} />}
         {format === 'pdf' && <PdfRenderer dataUrl={content} />}
       </div>
+      <div className="preview-footer">
+        <button className="back-home" onClick={onBack}>
+          ← 返回主页
+        </button>
+      </div>
     </div>
   )
 }

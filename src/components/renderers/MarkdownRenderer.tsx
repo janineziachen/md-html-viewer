@@ -21,8 +21,8 @@ export function MarkdownRenderer({ content }: Props) {
         components={{
           img: ({ src, alt }) => <SafeImage src={src as string} alt={alt} />,
           code: ({ className, children, ...props }) => {
-            if (className === 'language-mermaid') {
-              return <MermaidBlock chart={String(children)} />
+            if (/\blanguage-mermaid\b/.test(className ?? '')) {
+              return <MermaidBlock chart={String(children).replace(/\n$/, '')} />
             }
             return (
               <code className={className} {...props}>

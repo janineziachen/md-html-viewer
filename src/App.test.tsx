@@ -13,7 +13,7 @@ describe('App 集成', () => {
     fireEvent.change(screen.getByPlaceholderText(/把内容粘到这里/), { target: { value: '# 集成标题' } })
     fireEvent.click(screen.getByRole('button', { name: /预览/ }))
     expect(await screen.findByRole('heading', { name: '集成标题' })).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: /返回/ }))
+    fireEvent.click(screen.getByRole('button', { name: '返回' }))
     await waitFor(() => expect(screen.getByText(/# 集成标题/)).toBeInTheDocument())
   })
 })

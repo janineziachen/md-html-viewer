@@ -24,4 +24,13 @@ describe('MarkdownRenderer', () => {
     render(<MarkdownRenderer content={'![图A](https://x/a.png)'} />)
     expect(screen.getByRole('img')).toBeInTheDocument()
   })
+
+  it('mermaid 代码块走图表渲染而非显示成纯文本', () => {
+    const { container } = render(
+      <MarkdownRenderer content={'```mermaid\ngraph LR\nA-->B\n```'} />,
+    )
+    // MermaidBlock 渲染为 .mermaid 容器；普通 code 块则会有 <code> 文本
+    expect(container.querySelector('.mermaid')).toBeInTheDocument()
+    expect(container.querySelector('code')).toBeNull()
+  })
 })

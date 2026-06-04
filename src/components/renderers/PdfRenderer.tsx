@@ -51,10 +51,14 @@ export function PdfRenderer({ dataUrl }: Props) {
       .getPage(page)
       .then((p) => {
         if (cancelled) return
-        const viewport = p.getViewport({ scale })
+        const dpr = window.devicePixelRatio || 1
+        const viewport = p.getViewport({ scale: scale * dpr })
         const canvas = canvasRef.current!
         canvas.width = viewport.width
         canvas.height = viewport.height
+        // CSS 显示尺寸跟随 scale（除以 dpr 保持清晰），缩放才可见
+        canvas.style.width = `${viewport.width / dpr}px`
+        canvas.style.height = `${viewport.height / dpr}px`
         p.render({ canvas, viewport })
       })
       .catch(() => {})
@@ -82,7 +86,9 @@ export function PdfRenderer({ dataUrl }: Props) {
         <button onClick={() => setScale((s) => s + 0.2)}>放大</button>
         <button onClick={() => setScale((s) => Math.max(0.4, s - 0.2))}>缩小</button>
           </div>
-          <canvas ref={canvasRef} className="pdf-canvas" />
+          <div className="pdf-canvas-wrap">
+            <canvas ref={canvasRef} className="pdf-canvas" />
+          </div>
         </>
       )}
     </div>
