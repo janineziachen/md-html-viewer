@@ -125,8 +125,8 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
           </select>
         )}
         {isMarkdown && editMode === 'read' && (
-          <button onClick={enterEdit} aria-label="编辑">
-            编辑
+          <button onClick={enterEdit} aria-label="编辑模式">
+            编辑模式
           </button>
         )}
         {isMarkdown && editMode === 'read' && (
