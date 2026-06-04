@@ -18,7 +18,7 @@ interface Props {
 
 const FORMATS: DocFormat[] = ['markdown', 'json', 'html', 'pdf']
 
-type EditMode = 'read' | 'edit'
+type EditMode = 'read' | 'highlight' | 'edit'
 
 export function PreviewScreen({ format, content, isBinary: _isBinary, historyId: _historyId, onBack, onChangeFormat, onSave }: Props) {
   const [scale, setScale] = useState(1)
@@ -33,14 +33,35 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
   const isMarkdown = format === 'markdown'
   const highlightItems = isMarkdown ? extractHighlights(content) : []
 
+  function enterHighlight() {
+    setDraft(content)
+    setEditMode('highlight')
+    setOnlyHighlights(false)
+  }
+
   function enterEdit() {
     setDraft(content)
     setEditMode('edit')
     setOnlyHighlights(false)
   }
 
-  function exitEdit() {
+  function exitMode() {
     setEditMode('read')
+  }
+
+  function applyMarkInSelection(before: string, after: string) {
+    const sel = typeof window !== 'undefined' ? window.getSelection() : null
+    const selected = sel?.toString().trim() ?? ''
+    if (!selected) return
+    const idx = draft.indexOf(selected)
+    if (idx === -1) return
+    // skip if already wrapped with same marker
+    if (
+      draft.slice(idx - before.length, idx) === before &&
+      draft.slice(idx + selected.length, idx + selected.length + after.length) === after
+    ) return
+    setDraft(draft.slice(0, idx) + before + selected + after + draft.slice(idx + selected.length))
+    sel?.removeAllRanges()
   }
 
   function openSaveDialog() {
@@ -102,14 +123,16 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
     await onSave(exportContent, 'new', title)
   }
 
+  const isEditingMode = editMode === 'edit' || editMode === 'highlight'
+
   return (
     <div className="preview-screen">
       <div className="preview-toolbar">
         <button
-          onClick={editMode === 'edit' ? exitEdit : onBack}
-          aria-label={editMode === 'edit' ? '取消编辑' : '返回'}
+          onClick={isEditingMode ? exitMode : onBack}
+          aria-label={isEditingMode ? '取消' : '返回'}
         >
-          {editMode === 'edit' ? '✕ 取消' : '← 返回'}
+          {isEditingMode ? '✕ 取消' : '← 返回'}
         </button>
         {editMode === 'read' && (
           <select
@@ -125,9 +148,14 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
           </select>
         )}
         {isMarkdown && editMode === 'read' && (
-          <button onClick={enterEdit} aria-label="编辑模式">
-            编辑模式
-          </button>
+          <>
+            <button onClick={enterHighlight} aria-label="高亮模式">
+              高亮模式
+            </button>
+            <button onClick={enterEdit} aria-label="编辑模式">
+              编辑模式
+            </button>
+          </>
         )}
         {isMarkdown && editMode === 'read' && (
           <>
@@ -161,7 +189,46 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
         )}
       </div>
 
-      {editMode === 'edit' ? (
+      {editMode === 'highlight' && (
+        <div className="highlight-area">
+          <div className="highlight-toolbar">
+            <button onClick={() => applyMarkInSelection('==', '==')} aria-label="高亮选中文字">
+              高亮
+            </button>
+            <button onClick={() => applyMarkInSelection('**', '**')} aria-label="加粗选中文字">
+              B 加粗
+            </button>
+            <span className="edit-hint">划选文字后点「高亮」或「加粗」标记</span>
+            <button className="primary-btn highlight-save-btn" onClick={openSaveDialog} disabled={draft === content}>
+              保存
+            </button>
+          </div>
+          <div className="preview-content" style={{ '--doc-scale': scale } as React.CSSProperties}>
+            <MarkdownRenderer content={draft} />
+          </div>
+          {saveDialogOpen && (
+            <div className="save-dialog-overlay">
+              <div className="save-dialog">
+                <p className="save-dialog-title">保存方式</p>
+                <button onClick={confirmOverwrite}>覆盖原条</button>
+                <div className="save-dialog-divider">或</div>
+                <label className="save-dialog-label" htmlFor="save-title-input">另存为新条</label>
+                <input
+                  id="save-title-input"
+                  className="save-dialog-input"
+                  value={saveTitle}
+                  onChange={(e) => setSaveTitle(e.target.value)}
+                  placeholder="标题"
+                />
+                <button onClick={confirmSaveNew}>另存为新条</button>
+                <button onClick={() => setSaveDialogOpen(false)}>取消</button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {editMode === 'edit' && (
         <div className="edit-area">
           <div className="edit-toolbar">
             <button onClick={handleBold} aria-label="加粗">
@@ -202,7 +269,9 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
             </div>
           )}
         </div>
-      ) : (
+      )}
+
+      {editMode === 'read' && (
         <div
           className="preview-content"
           style={{ '--doc-scale': scale } as React.CSSProperties}
@@ -211,7 +280,7 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
           {format === 'markdown' && onlyHighlights && (
             <div className="highlights-only">
               {highlightItems.length === 0 ? (
-                <p className="highlights-empty">暂无高亮内容。在编辑模式中选中文字，点「高亮」按钮标记。</p>
+                <p className="highlights-empty">暂无高亮内容。进入「高亮模式」划选文字后点「高亮」按钮标记。</p>
               ) : (
                 <ul className="highlights-list">
                   {highlightItems.map((h, i) => (
