@@ -25,4 +25,16 @@ describe('HomeScreen', () => {
     )
     expect(screen.getByText('历史A')).toBeInTheDocument()
   })
+
+  it('默认在粘贴标签，显示粘贴框', () => {
+    render(<HomeScreen onOpen={() => {}} history={[]} onPick={() => {}} onDelete={() => {}} />)
+    expect(screen.getByPlaceholderText(/把内容粘到这里/)).toBeInTheDocument()
+  })
+
+  it('切到导入文件标签后隐藏粘贴框、显示文件入口', () => {
+    render(<HomeScreen onOpen={() => {}} history={[]} onPick={() => {}} onDelete={() => {}} />)
+    fireEvent.click(screen.getByRole('tab', { name: /导入文件/ }))
+    expect(screen.queryByPlaceholderText(/把内容粘到这里/)).not.toBeInTheDocument()
+    expect(screen.getByText('点此选择文件')).toBeInTheDocument()
+  })
 })

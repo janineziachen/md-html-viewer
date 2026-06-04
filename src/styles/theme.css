@@ -106,12 +106,58 @@ select {
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   animation: fade-in 0.25s ease;
+}
+.card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+.card-title {
+  margin: 2px 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--surface);
+  border-radius: 10px;
+  margin-bottom: 14px;
+}
+.tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  padding: 9px 0;
+  font-size: 14px;
+  color: var(--muted);
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.tab:hover {
+  background: transparent;
+}
+.tab--active {
+  background: var(--bg);
+  color: var(--fg);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fade-in 0.18s ease;
 }
 .paste-box {
   width: 100%;
-  min-height: 140px;
+  min-height: 150px;
   box-sizing: border-box;
   padding: 12px;
   border: 1px solid var(--border);
@@ -122,12 +168,63 @@ select {
   font-size: 14px;
   resize: vertical;
 }
-.home-actions {
-  display: flex;
-  gap: 10px;
+.primary-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 10px;
 }
-.home-actions button {
-  flex: 1;
+.primary-btn:hover {
+  background: var(--accent);
+  filter: brightness(1.05);
+}
+.primary-btn:disabled {
+  opacity: 0.45;
+}
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 150px;
+  padding: 20px;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  text-align: center;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+.dropzone--over {
+  border-color: var(--accent);
+  background: var(--code-bg);
+}
+.dropzone-icon {
+  font-size: 28px;
+  color: var(--accent);
+}
+.dropzone-text {
+  font-size: 15px;
+  color: var(--fg);
+}
+/* 默认（触屏手机）只说点击；有鼠标的桌面才提示拖入 */
+.dropzone-text--desktop {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .dropzone-text--touch {
+    display: none;
+  }
+  .dropzone-text--desktop {
+    display: inline;
+  }
+}
+.dropzone-hint {
+  font-size: 12px;
+  color: var(--muted);
 }
 .history-list {
   list-style: none;
@@ -144,6 +241,10 @@ select {
   border: 1px solid var(--border);
   border-radius: 10px;
   overflow: hidden;
+  transition: background 0.15s ease;
+}
+.history-list li:hover {
+  background: var(--surface);
 }
 
 .history-open {
@@ -155,6 +256,7 @@ select {
   border: none;
   border-radius: 0;
   background: transparent;
+  padding: 12px 14px;
   min-width: 0;
 }
 .history-format {
