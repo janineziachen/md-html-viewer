@@ -97,8 +97,9 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
   async function confirmExport() {
     const highlights = extractHighlights(content)
     const exportContent = highlights.map((h) => `- ==${h}==`).join('\n')
+    const title = exportDialog.title || '原标题 · 高亮'
     setExportDialog({ open: false, title: '' })
-    await onSave(exportContent, 'new', exportDialog.title || '原标题 · 高亮')
+    await onSave(exportContent, 'new', title)
   }
 
   return (
