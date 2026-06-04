@@ -119,4 +119,30 @@ describe('PreviewScreen edit mode (markdown only)', () => {
       '我的新标题',
     ))
   })
+
+  it('导出高亮弹出标题输入框，用户可修改后导出', async () => {
+    const onSave = vi.fn().mockResolvedValue(undefined)
+    render(
+      <PreviewScreen
+        format="markdown"
+        content={"# 标题\n这是 ==高亮== 文字"}
+        isBinary={false}
+        historyId="test-id"
+        onBack={() => {}}
+        onChangeFormat={() => {}}
+        onSave={onSave}
+      />,
+    )
+    fireEvent.click(screen.getByRole('button', { name: /导出高亮/ }))
+    const titleInput = screen.getByDisplayValue(/高亮/)
+    fireEvent.change(titleInput, { target: { value: '我的高亮集' } })
+    fireEvent.click(screen.getByRole('button', { name: /确认导出/ }))
+    await waitFor(() =>
+      expect(onSave).toHaveBeenCalledWith(
+        expect.stringContaining('高亮'),
+        'new',
+        '我的高亮集',
+      ),
+    )
+  })
 })

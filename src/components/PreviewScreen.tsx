@@ -27,6 +27,7 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
   const [saveDialogOpen, setSaveDialogOpen] = useState(false)
   const [saveTitle, setSaveTitle] = useState('')
   const [onlyHighlights, setOnlyHighlights] = useState(false)
+  const [exportDialog, setExportDialog] = useState<{ open: boolean; title: string }>({ open: false, title: '' })
 
   const showZoom = format === 'markdown' || format === 'json'
   const isMarkdown = format === 'markdown'
@@ -89,11 +90,15 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
     wrapSelection(ta, '==', '==', '高亮文字')
   }
 
-  async function handleExportHighlights() {
+  function openExportDialog() {
+    setExportDialog({ open: true, title: '原标题 · 高亮' })
+  }
+
+  async function confirmExport() {
     const highlights = extractHighlights(content)
-    if (highlights.length === 0) return
     const exportContent = highlights.map((h) => `- ==${h}==`).join('\n')
-    await onSave(exportContent, 'new', '原标题 · 高亮')
+    setExportDialog({ open: false, title: '' })
+    await onSave(exportContent, 'new', exportDialog.title || '原标题 · 高亮')
   }
 
   return (
@@ -132,7 +137,7 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
               {onlyHighlights ? '全文' : '只看高亮'}
             </button>
             {highlightItems.length > 0 && (
-              <button onClick={handleExportHighlights}>导出高亮</button>
+              <button onClick={openExportDialog}>导出高亮</button>
             )}
           </>
         )}
@@ -228,6 +233,24 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
           <button className="back-home" onClick={onBack}>
             ← 返回主页
           </button>
+        </div>
+      )}
+
+      {exportDialog.open && (
+        <div className="save-dialog-overlay">
+          <div className="save-dialog">
+            <p className="save-dialog-title">导出高亮</p>
+            <label className="save-dialog-label" htmlFor="export-title-input">标题</label>
+            <input
+              id="export-title-input"
+              className="save-dialog-input"
+              value={exportDialog.title}
+              onChange={(e) => setExportDialog((d) => ({ ...d, title: e.target.value }))}
+              placeholder="原标题 · 高亮"
+            />
+            <button onClick={confirmExport}>确认导出</button>
+            <button onClick={() => setExportDialog({ open: false, title: '' })}>取消</button>
+          </div>
         </div>
       )}
     </div>
