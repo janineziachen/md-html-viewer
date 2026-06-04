@@ -1,6 +1,7 @@
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
+import remarkMark from './remarkMark'
 import rehypeKatex from 'rehype-katex'
 import rehypeHighlight from 'rehype-highlight'
 import 'katex/dist/katex.min.css'
@@ -16,7 +17,7 @@ export function MarkdownRenderer({ content }: Props) {
   return (
     <div className="markdown-body">
       <ReactMarkdown
-        remarkPlugins={[remarkGfm, remarkMath]}
+        remarkPlugins={[remarkGfm, remarkMath, remarkMark]}
         rehypePlugins={[rehypeKatex, rehypeHighlight]}
         components={{
           img: ({ src, alt }) => <SafeImage src={src as string} alt={alt} />,

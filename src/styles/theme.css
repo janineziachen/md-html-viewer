@@ -394,6 +394,22 @@ select {
   border-left: 3px solid var(--border);
   color: var(--muted);
 }
+.markdown-body mark {
+  background: #fff176;
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+:root[data-theme='dark'] .markdown-body mark {
+  background: #7a6500;
+  color: #fef08a;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme='system'] .markdown-body mark {
+    background: #7a6500;
+    color: #fef08a;
+  }
+}
 .markdown-body table {
   display: block;
   width: 100%;

@@ -33,4 +33,11 @@ describe('MarkdownRenderer', () => {
     expect(container.querySelector('.mermaid')).toBeInTheDocument()
     expect(container.querySelector('code')).toBeNull()
   })
+
+  it('==x== 渲染成 mark 元素', () => {
+    const { container } = render(<MarkdownRenderer content="这是 ==高亮文字== 结束" />)
+    const mark = container.querySelector('mark')
+    expect(mark).toBeInTheDocument()
+    expect(mark?.textContent).toBe('高亮文字')
+  })
 })
