@@ -327,6 +327,114 @@ select {
   padding: 12px;
 }
 
+/* ---- Edit mode ---- */
+.edit-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 12px 16px;
+  gap: 10px;
+}
+.edit-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.edit-toolbar button {
+  padding: 6px 12px;
+  font-size: 14px;
+}
+.edit-hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+.edit-textarea {
+  flex: 1;
+  min-height: 60vh;
+  min-height: 60dvh;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--fg);
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-size: 14px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+.edit-actions {
+  display: flex;
+  gap: 8px;
+}
+.save-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.save-dialog {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  width: min(360px, 90vw);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.save-dialog-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 16px;
+}
+.save-dialog-divider {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+.save-dialog-label {
+  font-size: 13px;
+  color: var(--muted);
+}
+.save-dialog-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--fg);
+  font: inherit;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+/* ---- Highlights-only view ---- */
+.highlights-only {
+  padding: 16px;
+}
+.highlights-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.highlights-list li {
+  font-size: 16px;
+  line-height: 1.6;
+}
+.highlights-empty {
+  color: var(--muted);
+  text-align: center;
+  margin-top: 40px;
+}
+
 /* ---- Error fallback ---- */
 .error-fallback,
 .json-error,
