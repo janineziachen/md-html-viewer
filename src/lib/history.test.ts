@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { addHistory, listHistory, deleteHistory, clearAllHistory } from './history'
+import { addHistory, listHistory, deleteHistory, clearAllHistory, updateHistory } from './history'
 
 describe('history', () => {
   beforeEach(async () => {
@@ -27,5 +27,13 @@ describe('history', () => {
     const [item] = await listHistory()
     await deleteHistory(item.id)
     expect((await listHistory()).length).toBe(0)
+  })
+
+  it('updateHistory 更新内容', async () => {
+    const item = await addHistory({ format: 'markdown', title: 't', content: '# old', isBinary: false })
+    await updateHistory(item.id, '# new')
+    const [updated] = await listHistory()
+    expect(updated.content).toBe('# new')
+    expect(updated.title).toBe('t')
   })
 })

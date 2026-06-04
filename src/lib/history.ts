@@ -40,3 +40,10 @@ export async function clearAllHistory(): Promise<void> {
   const db = await dbPromise
   await db.clear('history')
 }
+
+export async function updateHistory(id: string, content: string): Promise<void> {
+  const db = await dbPromise
+  const item = await db.get('history', id)
+  if (!item) return
+  await db.put('history', { ...item, content })
+}
