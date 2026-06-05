@@ -75,9 +75,26 @@ body {
   gap: 8px;
 }
 .lang-toggle {
-  min-width: 40px;
-  padding: 8px 10px;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 10px;
+  font-size: 13px;
+}
+.lang-toggle-globe {
+  font-size: 14px;
+  line-height: 1;
+}
+.lang-toggle-sep {
+  color: var(--muted);
+  opacity: 0.6;
+}
+.lang-seg {
+  color: var(--muted);
+}
+.lang-seg--active {
+  color: var(--accent);
+  font-weight: 700;
 }
 
 /* ---- Buttons / controls ---- */
