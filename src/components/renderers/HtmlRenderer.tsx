@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useI18n } from '../../lib/i18n'
 
 interface Props {
   content: string
@@ -31,15 +32,16 @@ function withSafeNav(html: string, desktop: boolean): string {
 }
 
 export function HtmlRenderer({ content }: Props) {
+  const { t } = useI18n()
   const [desktop, setDesktop] = useState(false)
   return (
     <div className="html-view">
       <div className="html-view-bar">
         <button onClick={() => setDesktop((d) => !d)}>
-          {desktop ? '切回手机视图' : '桌面宽屏视图'}
+          {desktop ? t('html.toMobile') : t('html.toDesktop')}
         </button>
         <span className="html-view-hint">
-          {desktop ? '可左右拖动查看，建议横屏或电脑端查看' : '排版异常？切宽屏，或横屏/电脑端查看'}
+          {desktop ? t('html.desktopHint') : t('html.mobileHint')}
         </span>
       </div>
       <div className={desktop ? 'html-frame-wrap html-frame-wrap--desktop' : 'html-frame-wrap'}>

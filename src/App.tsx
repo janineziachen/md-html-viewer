@@ -3,8 +3,10 @@ import type { DocFormat, HistoryItem } from './types'
 import { HomeScreen, type OpenPayload } from './components/HomeScreen'
 import { PreviewScreen } from './components/PreviewScreen'
 import { ThemeToggle } from './components/ThemeToggle'
+import { LanguageToggle } from './components/LanguageToggle'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { addHistory, listHistory, deleteHistory, updateHistory } from './lib/history'
+import { useI18n } from './lib/i18n'
 
 interface Current {
   id: string | null
@@ -15,6 +17,7 @@ interface Current {
 }
 
 export default function App() {
+  const { t } = useI18n()
   const [current, setCurrent] = useState<Current | null>(null)
   const [history, setHistory] = useState<HistoryItem[]>([])
 
@@ -40,9 +43,9 @@ export default function App() {
         format: 'markdown',
         content: draft,
         isBinary: false,
-        title: title ?? '已编辑',
+        title: title ?? t('edited'),
       })
-      setCurrent({ id: saved.id, format: 'markdown', content: draft, isBinary: false, title: title ?? '已编辑' })
+      setCurrent({ id: saved.id, format: 'markdown', content: draft, isBinary: false, title: title ?? t('edited') })
     }
     await refresh()
   }
@@ -51,7 +54,10 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <span className="app-title">MobileMD</span>
-        <ThemeToggle />
+        <div className="header-controls">
+          <LanguageToggle />
+          <ThemeToggle />
+        </div>
       </header>
       {current ? (
         <ErrorBoundary resetKey={`${current.format}:${current.content}`} onReset={() => setCurrent(null)}>

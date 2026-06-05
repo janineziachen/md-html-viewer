@@ -1,4 +1,5 @@
-import { Component, type ReactNode } from 'react'
+import { Component, type ReactNode, type ContextType } from 'react'
+import { I18nContext } from '../lib/i18n'
 
 interface Props {
   children: ReactNode
@@ -11,6 +12,8 @@ interface State {
 }
 
 export class ErrorBoundary extends Component<Props, State> {
+  static contextType = I18nContext
+  declare context: ContextType<typeof I18nContext>
   state: State = { hasError: false }
 
   static getDerivedStateFromError(): State {
@@ -25,16 +28,17 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
+      const t = this.context.t
       return (
         <div className="error-fallback" role="alert">
-          <p>预览这份内容时出错了。可能是格式不匹配或内容有问题。</p>
+          <p>{t('error.preview')}</p>
           <button
             onClick={() => {
               this.setState({ hasError: false })
               this.props.onReset?.()
             }}
           >
-            返回
+            {t('back')}
           </button>
         </div>
       )

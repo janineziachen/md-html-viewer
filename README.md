@@ -2,6 +2,21 @@
 
 在手机浏览器里预览 Markdown / JSON / HTML / PDF 文件与粘贴文本。纯前端 PWA，文件仅在本地处理，不上传任何服务器。
 
+## 👉 Use it now
+
+**Open the link in any browser — nothing to download or install:**
+
+### **https://janineziachen.github.io/md-html-viewer/**
+
+Open the URL above on your phone or computer and it just works. To keep it on your phone like a real app:
+
+- **Android (Chrome):** open the link → tap the ⋮ menu (top-right) → **Add to Home screen** / **Install app**
+- **iPhone (Safari):** open the link → tap the **Share** button (bottom) → **Add to Home Screen**
+
+After that, a MobileMD icon appears on your home screen. Tap it to open — it also works offline.
+
+> Access to GitHub can be unstable on some networks in mainland China. If it won't open, retry later or switch networks.
+
 ## 功能
 
 - **Markdown**：GFM 表格/任务清单、代码高亮、LaTeX 公式、Mermaid 图表

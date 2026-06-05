@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import type { DocFormat, HistoryItem } from '../types'
 import { detectFromText, detectFromFilename } from '../lib/detectFormat'
 import { readTextFile, readBinaryAsDataUrl } from '../lib/readFile'
+import { useI18n } from '../lib/i18n'
 
 export interface OpenPayload {
   format: DocFormat
@@ -20,9 +21,11 @@ interface Props {
 type Tab = 'paste' | 'file'
 
 export function HomeScreen({ onOpen, history, onPick, onDelete }: Props) {
+  const { t } = useI18n()
   const [tab, setTab] = useState<Tab>('paste')
   const [text, setText] = useState('')
   const [dragOver, setDragOver] = useState(false)
+  const [guideOpen, setGuideOpen] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
 
   function openPasted() {
@@ -65,7 +68,7 @@ export function HomeScreen({ onOpen, history, onPick, onDelete }: Props) {
             className={tab === 'paste' ? 'tab tab--active' : 'tab'}
             onClick={() => setTab('paste')}
           >
-            粘贴文本
+            {t('tab.paste')}
           </button>
           <button
             role="tab"
@@ -73,7 +76,7 @@ export function HomeScreen({ onOpen, history, onPick, onDelete }: Props) {
             className={tab === 'file' ? 'tab tab--active' : 'tab'}
             onClick={() => setTab('file')}
           >
-            导入文件
+            {t('tab.file')}
           </button>
         </div>
 
@@ -81,12 +84,12 @@ export function HomeScreen({ onOpen, history, onPick, onDelete }: Props) {
           <div className="tab-panel">
             <textarea
               className="paste-box"
-              placeholder="把内容粘到这里（md / json / html 文本）"
+              placeholder={t('paste.placeholder')}
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
             <button className="primary-btn" onClick={openPasted} disabled={!text.trim()}>
-              预览
+              {t('preview')}
             </button>
           </div>
         ) : (
@@ -104,9 +107,9 @@ export function HomeScreen({ onOpen, history, onPick, onDelete }: Props) {
               <span className="dropzone-icon" aria-hidden>
                 ⬆
               </span>
-              <span className="dropzone-text dropzone-text--touch">点此选择文件</span>
-              <span className="dropzone-text dropzone-text--desktop">拖入文件，或点此选择</span>
-              <span className="dropzone-hint">支持 md / json / html / pdf</span>
+              <span className="dropzone-text dropzone-text--touch">{t('dropzone.touch')}</span>
+              <span className="dropzone-text dropzone-text--desktop">{t('dropzone.desktop')}</span>
+              <span className="dropzone-hint">{t('dropzone.hint')}</span>
             </div>
             <input
               ref={fileInput}
@@ -119,9 +122,28 @@ export function HomeScreen({ onOpen, history, onPick, onDelete }: Props) {
         )}
       </section>
 
+      <section className="card guide-card">
+        <button
+          className="guide-toggle"
+          aria-expanded={guideOpen}
+          onClick={() => setGuideOpen((v) => !v)}
+        >
+          <span>{t('guide.title')}</span>
+          <span className="guide-chevron" aria-hidden>{guideOpen ? '▲' : '▼'}</span>
+        </button>
+        {guideOpen && (
+          <ul className="guide-list">
+            <li>{t('guide.paste')}</li>
+            <li>{t('guide.file')}</li>
+            <li>{t('guide.mark')}</li>
+            <li>{t('guide.local')}</li>
+          </ul>
+        )}
+      </section>
+
       {history.length > 0 && (
         <section className="card history-card">
-          <h2 className="card-title">最近浏览</h2>
+          <h2 className="card-title">{t('recent')}</h2>
           <ul className="history-list">
             {history.map((item) => (
               <li key={item.id}>
@@ -131,7 +153,7 @@ export function HomeScreen({ onOpen, history, onPick, onDelete }: Props) {
                 </button>
                 <button
                   className="history-del"
-                  aria-label="删除"
+                  aria-label={t('delete')}
                   onClick={() => onDelete(item.id)}
                 >
                   ×

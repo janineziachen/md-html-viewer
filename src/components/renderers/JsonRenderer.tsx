@@ -1,18 +1,20 @@
 import { JsonView, defaultStyles } from 'react-json-view-lite'
 import 'react-json-view-lite/dist/index.css'
+import { useI18n } from '../../lib/i18n'
 
 interface Props {
   content: string
 }
 
 export function JsonRenderer({ content }: Props) {
+  const { t } = useI18n()
   let parsed: unknown
   try {
     parsed = JSON.parse(content)
   } catch {
     return (
       <div className="json-error">
-        无法解析 JSON。请检查内容格式，或手动切换为其他格式查看。
+        {t('json.error')}
       </div>
     )
   }

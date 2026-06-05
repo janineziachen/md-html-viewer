@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import * as pdfjs from 'pdfjs-dist'
 import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
+import { useI18n } from '../../lib/i18n'
 
 pdfjs.GlobalWorkerOptions.workerSrc = workerUrl
 
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export function PdfRenderer({ dataUrl }: Props) {
+  const { t } = useI18n()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [page, setPage] = useState(1)
   const [total, setTotal] = useState(0)
@@ -70,21 +72,21 @@ export function PdfRenderer({ dataUrl }: Props) {
   return (
     <div className="pdf-body">
       {error ? (
-        <div className="pdf-error">无法加载 PDF。该内容可能不是有效的 PDF 文件。</div>
+        <div className="pdf-error">{t('pdf.error')}</div>
       ) : (
         <>
           <div className="pdf-toolbar">
         <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}>
-          上一页
+          {t('pdf.prev')}
         </button>
         <span>
-          第 {page} / {total} 页
+          {t('pdf.pageInfo', { page, total })}
         </span>
         <button onClick={() => setPage((p) => Math.min(total, p + 1))} disabled={page >= total}>
-          下一页
+          {t('pdf.next')}
         </button>
-        <button onClick={() => setScale((s) => s + 0.2)}>放大</button>
-        <button onClick={() => setScale((s) => Math.max(0.4, s - 0.2))}>缩小</button>
+        <button onClick={() => setScale((s) => s + 0.2)}>{t('pdf.zoomIn')}</button>
+        <button onClick={() => setScale((s) => Math.max(0.4, s - 0.2))}>{t('pdf.zoomOut')}</button>
           </div>
           <div className="pdf-canvas-wrap">
             <canvas ref={canvasRef} className="pdf-canvas" />

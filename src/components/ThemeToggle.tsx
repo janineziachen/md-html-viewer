@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
+import { useI18n } from '../lib/i18n'
 
 type Theme = 'system' | 'light' | 'dark'
 const ORDER: Theme[] = ['system', 'light', 'dark']
-const LABEL: Record<Theme, string> = { system: '跟随系统', light: '浅色', dark: '深色' }
 
 export function ThemeToggle() {
+  const { t } = useI18n()
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem('theme') as Theme) ?? 'system',
   )
@@ -18,9 +19,15 @@ export function ThemeToggle() {
     setTheme((t) => ORDER[(ORDER.indexOf(t) + 1) % ORDER.length])
   }
 
+  const label: Record<Theme, string> = {
+    system: t('theme.system'),
+    light: t('theme.light'),
+    dark: t('theme.dark'),
+  }
+
   return (
-    <button className="theme-toggle" aria-label="主题切换" onClick={cycle}>
-      {LABEL[theme]}
+    <button className="theme-toggle" aria-label={t('theme.label')} onClick={cycle}>
+      {label[theme]}
     </button>
   )
 }

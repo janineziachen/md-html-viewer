@@ -5,6 +5,7 @@ import { JsonRenderer } from './renderers/JsonRenderer'
 import { HtmlRenderer } from './renderers/HtmlRenderer'
 import { PdfRenderer } from './renderers/PdfRenderer'
 import { extractHighlights } from '../lib/highlight'
+import { useI18n } from '../lib/i18n'
 
 interface Props {
   format: DocFormat
@@ -22,6 +23,7 @@ const FORMATS: DocFormat[] = ['markdown', 'json', 'html', 'pdf']
 type EditMode = 'read' | 'highlight' | 'edit'
 
 export function PreviewScreen({ format, content, isBinary: _isBinary, historyId: _historyId, docTitle, onBack, onChangeFormat, onSave }: Props) {
+  const { t } = useI18n()
   const [scale, setScale] = useState(1)
   const [editMode, setEditMode] = useState<EditMode>('read')
   const [draft, setDraft] = useState(content)
@@ -129,19 +131,19 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
   function handleBold() {
     const ta = document.querySelector<HTMLTextAreaElement>('.edit-textarea')
     if (!ta) return
-    wrapSelection(ta, '**', '**', '加粗文字')
+    wrapSelection(ta, '**', '**', t('placeholder.bold'))
   }
 
   function handleHighlight() {
     const ta = document.querySelector<HTMLTextAreaElement>('.edit-textarea')
     if (!ta) return
-    wrapSelection(ta, '==', '==', '高亮文字')
+    wrapSelection(ta, '==', '==', t('placeholder.highlight'))
   }
 
   async function confirmExport() {
     const highlights = extractHighlights(content)
     const exportContent = highlights.map((h) => `- ==${h}==`).join('\n')
-    const title = exportDialog.title || '原标题 · 高亮'
+    const title = exportDialog.title || t('export.fallbackTitle')
     setExportDialog({ open: false, title: '' })
     await onSave(exportContent, 'new', title)
   }
@@ -153,15 +155,15 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
       <div className="preview-toolbar" ref={toolbarRef}>
         <button
           onClick={isEditingMode ? exitMode : onBack}
-          aria-label={isEditingMode ? '取消' : '返回'}
+          aria-label={isEditingMode ? t('cancel') : t('back')}
         >
-          {isEditingMode ? '✕ 取消' : '← 返回'}
+          {isEditingMode ? `✕ ${t('cancel')}` : `← ${t('back')}`}
         </button>
         {editMode === 'read' && (
           <select
             value={format}
             onChange={(e) => onChangeFormat(e.target.value as DocFormat)}
-            aria-label="切换格式"
+            aria-label={t('switchFormat')}
           >
             {FORMATS.map((f) => (
               <option key={f} value={f}>
@@ -172,11 +174,11 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
         )}
         {isMarkdown && editMode === 'read' && (
           <>
-            <button onClick={enterHighlight} aria-label="高亮模式">
-              高亮模式
+            <button onClick={enterHighlight} aria-label={t('highlightMode')}>
+              {t('highlightMode')}
             </button>
-            <button onClick={enterEdit} aria-label="编辑模式">
-              编辑模式
+            <button onClick={enterEdit} aria-label={t('editMode')}>
+              {t('editMode')}
             </button>
           </>
         )}
@@ -186,21 +188,21 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
             onClick={() => setOnlyHighlights((v) => !v)}
             aria-pressed={onlyHighlights}
           >
-            {onlyHighlights ? '全文' : '只看高亮'}
+            {onlyHighlights ? t('fullText') : t('onlyHighlights')}
           </button>
         )}
         {showZoom && editMode === 'read' && (
           <div className="zoom-controls">
             <button
               onClick={() => setScale((s) => Math.max(0.6, Math.round((s - 0.1) * 10) / 10))}
-              aria-label="缩小字体"
+              aria-label={t('zoomOut')}
             >
               A-
             </button>
             <span className="zoom-level">{Math.round(scale * 100)}%</span>
             <button
               onClick={() => setScale((s) => Math.min(2.4, Math.round((s + 0.1) * 10) / 10))}
-              aria-label="放大字体"
+              aria-label={t('zoomIn')}
             >
               A+
             </button>
@@ -214,25 +216,25 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
             <button
               onTouchStart={saveSelectionOnTouch}
               onClick={() => applyMarkInSelection('==', '==')}
-              aria-label="高亮选中文字"
+              aria-label={t('highlightSelected')}
             >
-              高亮
+              {t('highlight')}
             </button>
             <button
               onTouchStart={saveSelectionOnTouch}
               onClick={() => applyMarkInSelection('**', '**')}
-              aria-label="加粗选中文字"
+              aria-label={t('boldSelected')}
             >
-              B 加粗
+              {t('bold')}
             </button>
-            <span className="edit-hint">划选文字后点「高亮」或「加粗」标记</span>
+            <span className="edit-hint">{t('highlightHint')}</span>
             {extractHighlights(draft).length > 0 && (
-              <button onClick={() => setExportDialog({ open: true, title: `${docTitle} · 高亮` })}>
-                导出高亮
+              <button onClick={() => setExportDialog({ open: true, title: `${docTitle} · ${t('suffix.highlight')}` })}>
+                {t('exportHighlights')}
               </button>
             )}
             <button className="primary-btn highlight-save-btn" onClick={openSaveDialog} disabled={draft === content}>
-              保存
+              {t('save')}
             </button>
           </div>
           <div className="preview-content" style={{ '--doc-scale': scale } as React.CSSProperties}>
@@ -244,15 +246,15 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
       {editMode === 'edit' && (
         <div className="edit-area">
           <div className="edit-toolbar">
-            <button onClick={handleBold} aria-label="加粗">
-              B 加粗
+            <button onClick={handleBold} aria-label={t('boldLabel')}>
+              {t('bold')}
             </button>
-            <button onClick={handleHighlight} aria-label="高亮">
-              高亮
+            <button onClick={handleHighlight} aria-label={t('highlight')}>
+              {t('highlight')}
             </button>
-            <span className="edit-hint">直接打字改原文；选中后点按钮加粗或高亮</span>
+            <span className="edit-hint">{t('editHint')}</span>
             <button className="primary-btn highlight-save-btn" onClick={openSaveDialog} disabled={!draft.trim()}>
-              保存
+              {t('save')}
             </button>
           </div>
           <textarea
@@ -272,7 +274,7 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
           {format === 'markdown' && onlyHighlights && (
             <div className="highlights-only">
               {highlightItems.length === 0 ? (
-                <p className="highlights-empty">暂无高亮内容。进入「高亮模式」划选文字后点「高亮」按钮标记。</p>
+                <p className="highlights-empty">{t('noHighlights')}</p>
               ) : (
                 <ul className="highlights-list">
                   {highlightItems.map((h, i) => (
@@ -293,7 +295,7 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
       {editMode === 'read' && (
         <div className="preview-footer">
           <button className="back-home" onClick={onBack}>
-            ← 返回主页
+            ← {t('backHome')}
           </button>
         </div>
       )}
@@ -303,27 +305,27 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
           <div className="save-dialog">
             {saveStep === 'choose' && (
               <>
-                <p className="save-dialog-title">保存方式</p>
-                <button onClick={() => setSaveStep('confirm-overwrite')}>覆盖原条</button>
+                <p className="save-dialog-title">{t('saveMethod')}</p>
+                <button onClick={() => setSaveStep('confirm-overwrite')}>{t('overwrite')}</button>
                 <button onClick={() => {
                   setSaveTitle(`${docTitle} (1)`)
                   setSaveStep('save-new')
-                }}>另存为新条</button>
-                <button className="save-dialog-cancel" onClick={() => setSaveDialogOpen(false)}>取消</button>
+                }}>{t('saveAsNew')}</button>
+                <button className="save-dialog-cancel" onClick={() => setSaveDialogOpen(false)}>{t('cancel')}</button>
               </>
             )}
             {saveStep === 'confirm-overwrite' && (
               <>
-                <p className="save-dialog-title">覆盖原条</p>
-                <p className="save-dialog-desc">将用当前内容直接覆盖保存，无法撤销。</p>
-                <button className="primary-btn" onClick={confirmOverwrite}>确定保存</button>
-                <button onClick={() => setSaveStep('choose')}>取消</button>
+                <p className="save-dialog-title">{t('overwrite')}</p>
+                <p className="save-dialog-desc">{t('overwriteDesc')}</p>
+                <button className="primary-btn" onClick={confirmOverwrite}>{t('confirmSave')}</button>
+                <button onClick={() => setSaveStep('choose')}>{t('cancel')}</button>
               </>
             )}
             {saveStep === 'save-new' && (
               <>
-                <p className="save-dialog-title">另存为新条</p>
-                <label className="save-dialog-label" htmlFor="save-title-input">文件名称</label>
+                <p className="save-dialog-title">{t('saveAsNew')}</p>
+                <label className="save-dialog-label" htmlFor="save-title-input">{t('fileName')}</label>
                 <input
                   id="save-title-input"
                   className="save-dialog-input"
@@ -332,8 +334,8 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
                   placeholder={`${docTitle} (1)`}
                   autoFocus
                 />
-                <button className="primary-btn" onClick={confirmSaveNew}>确定</button>
-                <button onClick={() => setSaveStep('choose')}>取消</button>
+                <button className="primary-btn" onClick={confirmSaveNew}>{t('confirm')}</button>
+                <button onClick={() => setSaveStep('choose')}>{t('cancel')}</button>
               </>
             )}
           </div>
@@ -343,17 +345,17 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
       {exportDialog.open && (
         <div className="save-dialog-overlay">
           <div className="save-dialog">
-            <p className="save-dialog-title">导出高亮</p>
-            <label className="save-dialog-label" htmlFor="export-title-input">标题</label>
+            <p className="save-dialog-title">{t('exportHighlights')}</p>
+            <label className="save-dialog-label" htmlFor="export-title-input">{t('title')}</label>
             <input
               id="export-title-input"
               className="save-dialog-input"
               value={exportDialog.title}
               onChange={(e) => setExportDialog((d) => ({ ...d, title: e.target.value }))}
-              placeholder={`${docTitle} · 高亮`}
+              placeholder={`${docTitle} · ${t('suffix.highlight')}`}
             />
-            <button onClick={confirmExport}>确认导出</button>
-            <button onClick={() => setExportDialog({ open: false, title: '' })}>取消</button>
+            <button onClick={confirmExport}>{t('confirmExport')}</button>
+            <button onClick={() => setExportDialog({ open: false, title: '' })}>{t('cancel')}</button>
           </div>
         </div>
       )}
