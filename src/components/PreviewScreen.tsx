@@ -11,6 +11,7 @@ interface Props {
   content: string
   isBinary: boolean
   historyId: string | null
+  docTitle: string
   onBack: () => void
   onChangeFormat: (f: DocFormat) => void
   onSave: (draft: string, mode: 'overwrite' | 'new', title?: string) => Promise<void>
@@ -20,7 +21,7 @@ const FORMATS: DocFormat[] = ['markdown', 'json', 'html', 'pdf']
 
 type EditMode = 'read' | 'highlight' | 'edit'
 
-export function PreviewScreen({ format, content, isBinary: _isBinary, historyId: _historyId, onBack, onChangeFormat, onSave }: Props) {
+export function PreviewScreen({ format, content, isBinary: _isBinary, historyId: _historyId, docTitle, onBack, onChangeFormat, onSave }: Props) {
   const [scale, setScale] = useState(1)
   const [editMode, setEditMode] = useState<EditMode>('read')
   const [draft, setDraft] = useState(content)
@@ -294,7 +295,7 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
                 <p className="save-dialog-title">保存方式</p>
                 <button onClick={() => setSaveStep('confirm-overwrite')}>覆盖原条</button>
                 <button onClick={() => {
-                  setSaveTitle('原标题 (1)')
+                  setSaveTitle(`${docTitle} (1)`)
                   setSaveStep('save-new')
                 }}>另存为新条</button>
                 <button className="save-dialog-cancel" onClick={() => setSaveDialogOpen(false)}>取消</button>
@@ -317,7 +318,7 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
                   className="save-dialog-input"
                   value={saveTitle}
                   onChange={(e) => setSaveTitle(e.target.value)}
-                  placeholder="原标题 (1)"
+                  placeholder={`${docTitle} (1)`}
                   autoFocus
                 />
                 <button className="primary-btn" onClick={confirmSaveNew}>确定</button>

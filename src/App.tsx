@@ -11,6 +11,7 @@ interface Current {
   format: DocFormat
   content: string
   isBinary: boolean
+  title: string
 }
 
 export default function App() {
@@ -26,7 +27,7 @@ export default function App() {
 
   async function open(p: OpenPayload) {
     const saved = await addHistory({ format: p.format, content: p.content, isBinary: p.isBinary, title: p.title })
-    setCurrent({ id: saved.id, format: p.format, content: p.content, isBinary: p.isBinary })
+    setCurrent({ id: saved.id, format: p.format, content: p.content, isBinary: p.isBinary, title: p.title })
     await refresh()
   }
 
@@ -41,7 +42,7 @@ export default function App() {
         isBinary: false,
         title: title ?? '已编辑',
       })
-      setCurrent({ id: saved.id, format: 'markdown', content: draft, isBinary: false })
+      setCurrent({ id: saved.id, format: 'markdown', content: draft, isBinary: false, title: title ?? '已编辑' })
     }
     await refresh()
   }
@@ -59,6 +60,7 @@ export default function App() {
             content={current.content}
             isBinary={current.isBinary}
             historyId={current.id}
+            docTitle={current.title}
             onBack={() => setCurrent(null)}
             onChangeFormat={(f) => setCurrent({ ...current, format: f })}
             onSave={handleSave}
@@ -69,7 +71,7 @@ export default function App() {
           onOpen={open}
           history={history}
           onPick={(item) =>
-            setCurrent({ id: item.id, format: item.format, content: item.content, isBinary: item.isBinary })
+            setCurrent({ id: item.id, format: item.format, content: item.content, isBinary: item.isBinary, title: item.title })
           }
           onDelete={async (id) => {
             await deleteHistory(id)
