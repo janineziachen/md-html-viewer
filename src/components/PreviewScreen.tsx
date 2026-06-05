@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import type { DocFormat } from '../types'
 import { MarkdownRenderer } from './renderers/MarkdownRenderer'
 import { JsonRenderer } from './renderers/JsonRenderer'
@@ -28,6 +28,15 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
   const [saveTitle, setSaveTitle] = useState('')
   const [onlyHighlights, setOnlyHighlights] = useState(false)
   const [exportDialog, setExportDialog] = useState<{ open: boolean; title: string }>({ open: false, title: '' })
+  // On mobile, touching a button clears the text selection before the click fires.
+  // We snapshot the selection on touchstart so applyMarkInSelection can still use it.
+  const savedSelectionRef = useRef<string>('')
+
+  function saveSelectionOnTouch() {
+    const sel = typeof window !== 'undefined' ? window.getSelection() : null
+    const text = sel?.toString().trim() ?? ''
+    if (text) savedSelectionRef.current = text
+  }
 
   const showZoom = format === 'markdown' || format === 'json'
   const isMarkdown = format === 'markdown'
@@ -51,7 +60,9 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
 
   function applyMarkInSelection(before: string, after: string) {
     const sel = typeof window !== 'undefined' ? window.getSelection() : null
-    const selected = sel?.toString().trim() ?? ''
+    // Use live selection, or fall back to the touchstart snapshot
+    const selected = (sel?.toString().trim() || savedSelectionRef.current).trim()
+    savedSelectionRef.current = ''
     if (!selected) return
     const idx = draft.indexOf(selected)
     if (idx === -1) return
@@ -192,10 +203,18 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
       {editMode === 'highlight' && (
         <div className="highlight-area">
           <div className="highlight-toolbar">
-            <button onClick={() => applyMarkInSelection('==', '==')} aria-label="高亮选中文字">
+            <button
+              onTouchStart={saveSelectionOnTouch}
+              onClick={() => applyMarkInSelection('==', '==')}
+              aria-label="高亮选中文字"
+            >
               高亮
             </button>
-            <button onClick={() => applyMarkInSelection('**', '**')} aria-label="加粗选中文字">
+            <button
+              onTouchStart={saveSelectionOnTouch}
+              onClick={() => applyMarkInSelection('**', '**')}
+              aria-label="加粗选中文字"
+            >
               B 加粗
             </button>
             <span className="edit-hint">划选文字后点「高亮」或「加粗」标记</span>
