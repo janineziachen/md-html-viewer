@@ -138,10 +138,6 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
     wrapSelection(ta, '==', '==', '高亮文字')
   }
 
-  function openExportDialog() {
-    setExportDialog({ open: true, title: `${docTitle} · 高亮` })
-  }
-
   async function confirmExport() {
     const highlights = extractHighlights(content)
     const exportContent = highlights.map((h) => `- ==${h}==`).join('\n')
