@@ -402,17 +402,6 @@ select {
   resize: vertical;
   box-sizing: border-box;
 }
-.edit-actions {
-  display: flex;
-  gap: 8px;
-  padding: 10px 16px;
-  padding-bottom: max(10px, env(safe-area-inset-bottom));
-  border-top: 1px solid var(--border);
-  position: sticky;
-  bottom: 0;
-  background: var(--bg);
-  z-index: 4;
-}
 .save-dialog-overlay {
   position: fixed;
   inset: 0;

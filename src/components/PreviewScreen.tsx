@@ -256,18 +256,16 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
             <button onClick={handleHighlight} aria-label="高亮">
               高亮
             </button>
-            <span className="edit-hint">直接打字改原文；选中文字后点上方按钮加粗或高亮</span>
+            <span className="edit-hint">直接打字改原文；选中后点按钮加粗或高亮</span>
+            <button className="primary-btn highlight-save-btn" onClick={openSaveDialog} disabled={!draft.trim()}>
+              保存
+            </button>
           </div>
           <textarea
             className="edit-textarea"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
           />
-          <div className="edit-actions">
-            <button className="primary-btn" onClick={openSaveDialog} disabled={!draft.trim()}>
-              保存
-            </button>
-          </div>
           {saveDialogOpen && (
             <div className="save-dialog-overlay">
               <div className="save-dialog">
