@@ -341,9 +341,8 @@ select {
   flex-wrap: wrap;
   padding: 10px 16px;
   border-bottom: 1px solid var(--border);
-  /* sticks below preview-toolbar which is ~45px; use sticky so it scrolls away if content is short */
   position: sticky;
-  top: 45px;
+  top: var(--toolbar-h, 45px);
   background: var(--bg);
   z-index: 4;
 }
@@ -372,7 +371,7 @@ select {
   padding: 10px 16px;
   border-bottom: 1px solid var(--border);
   position: sticky;
-  top: 45px;
+  top: var(--toolbar-h, 45px);
   background: var(--bg);
   z-index: 4;
 }
@@ -388,10 +387,8 @@ select {
   flex: 1;
   min-height: 60vh;
   min-height: 60dvh;
-  width: 100%;
-  padding: 12px;
-  margin: 12px 16px;
   width: calc(100% - 32px);
+  margin: 12px 16px;
   padding: 12px;
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -443,7 +440,20 @@ select {
 .save-dialog-cancel {
   color: var(--muted);
   background: transparent;
-  border-color: transparent;
+  border: 1px solid var(--border);
+}
+.save-dialog-cancel:hover {
+  background: var(--surface);
+}
+/* active/pressed state for toggle buttons (e.g. 只看高亮) */
+.btn-active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.btn-active:hover {
+  background: var(--accent);
+  filter: brightness(1.08);
 }
 .save-dialog-input {
   width: 100%;

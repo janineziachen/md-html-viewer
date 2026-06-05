@@ -139,6 +139,8 @@ describe('PreviewScreen edit mode (markdown only)', () => {
         onSave={onSave}
       />,
     )
+    // 导出高亮按钮现在在高亮模式工具栏里
+    fireEvent.click(screen.getByRole('button', { name: /高亮模式/ }))
     fireEvent.click(screen.getByRole('button', { name: /导出高亮/ }))
     const titleInput = screen.getByDisplayValue(/高亮/)
     fireEvent.change(titleInput, { target: { value: '我的高亮集' } })

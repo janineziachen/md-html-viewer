@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useLayoutEffect } from 'react'
 import type { DocFormat } from '../types'
 import { MarkdownRenderer } from './renderers/MarkdownRenderer'
 import { JsonRenderer } from './renderers/JsonRenderer'
@@ -33,6 +33,20 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
   // On mobile, touching a button clears the text selection before the click fires.
   // We snapshot the selection on touchstart so applyMarkInSelection can still use it.
   const savedSelectionRef = useRef<string>('')
+  const toolbarRef = useRef<HTMLDivElement>(null)
+
+  // Measure preview-toolbar height so sticky sub-toolbars offset correctly even when it wraps
+  useLayoutEffect(() => {
+    const el = toolbarRef.current
+    if (!el || typeof ResizeObserver === 'undefined') return
+    const update = () => {
+      document.documentElement.style.setProperty('--toolbar-h', `${el.offsetHeight}px`)
+    }
+    update()
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [editMode])
 
   function saveSelectionOnTouch() {
     const sel = typeof window !== 'undefined' ? window.getSelection() : null
@@ -125,7 +139,7 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
   }
 
   function openExportDialog() {
-    setExportDialog({ open: true, title: '原标题 · 高亮' })
+    setExportDialog({ open: true, title: `${docTitle} · 高亮` })
   }
 
   async function confirmExport() {
@@ -140,7 +154,7 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
 
   return (
     <div className="preview-screen">
-      <div className="preview-toolbar">
+      <div className="preview-toolbar" ref={toolbarRef}>
         <button
           onClick={isEditingMode ? exitMode : onBack}
           aria-label={isEditingMode ? '取消' : '返回'}
@@ -171,17 +185,13 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
           </>
         )}
         {isMarkdown && editMode === 'read' && (
-          <>
-            <button
-              onClick={() => setOnlyHighlights((v) => !v)}
-              aria-pressed={onlyHighlights}
-            >
-              {onlyHighlights ? '全文' : '只看高亮'}
-            </button>
-            {highlightItems.length > 0 && (
-              <button onClick={openExportDialog}>导出高亮</button>
-            )}
-          </>
+          <button
+            className={onlyHighlights ? 'btn-active' : undefined}
+            onClick={() => setOnlyHighlights((v) => !v)}
+            aria-pressed={onlyHighlights}
+          >
+            {onlyHighlights ? '全文' : '只看高亮'}
+          </button>
         )}
         {showZoom && editMode === 'read' && (
           <div className="zoom-controls">
@@ -220,6 +230,11 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
               B 加粗
             </button>
             <span className="edit-hint">划选文字后点「高亮」或「加粗」标记</span>
+            {extractHighlights(draft).length > 0 && (
+              <button onClick={() => setExportDialog({ open: true, title: `${docTitle} · 高亮` })}>
+                导出高亮
+              </button>
+            )}
             <button className="primary-btn highlight-save-btn" onClick={openSaveDialog} disabled={draft === content}>
               保存
             </button>
@@ -339,7 +354,7 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
               className="save-dialog-input"
               value={exportDialog.title}
               onChange={(e) => setExportDialog((d) => ({ ...d, title: e.target.value }))}
-              placeholder="原标题 · 高亮"
+              placeholder={`${docTitle} · 高亮`}
             />
             <button onClick={confirmExport}>确认导出</button>
             <button onClick={() => setExportDialog({ open: false, title: '' })}>取消</button>
