@@ -101,6 +101,8 @@ describe('PreviewScreen edit mode (markdown only)', () => {
     fireEvent.change(screen.getByRole('textbox'), { target: { value: '# 改了' } })
     fireEvent.click(screen.getByRole('button', { name: /保存/ }))
     fireEvent.click(screen.getByRole('button', { name: /覆盖原条/ }))
+    // 进入确认步骤后点「确定保存」
+    fireEvent.click(screen.getByRole('button', { name: /确定保存/ }))
     await waitFor(() => expect(onSave).toHaveBeenCalledWith('# 改了', 'overwrite', undefined))
   })
 
@@ -110,9 +112,10 @@ describe('PreviewScreen edit mode (markdown only)', () => {
     fireEvent.click(screen.getByRole('button', { name: /编辑/ }))
     fireEvent.change(screen.getByRole('textbox'), { target: { value: '# 改了内容' } })
     fireEvent.click(screen.getByRole('button', { name: /保存/ }))
-    const titleInput = screen.getByDisplayValue(/已编辑/)
-    fireEvent.change(titleInput, { target: { value: '我的新标题' } })
     fireEvent.click(screen.getByRole('button', { name: /另存为新条/ }))
+    const titleInput = screen.getByDisplayValue(/\(1\)/)
+    fireEvent.change(titleInput, { target: { value: '我的新标题' } })
+    fireEvent.click(screen.getByRole('button', { name: /确定$/ }))
     await waitFor(() => expect(onSave).toHaveBeenCalledWith(
       '# 改了内容',
       'new',

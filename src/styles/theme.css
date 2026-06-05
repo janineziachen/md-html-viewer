@@ -435,6 +435,16 @@ select {
   font-size: 13px;
   color: var(--muted);
 }
+.save-dialog-desc {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+.save-dialog-cancel {
+  color: var(--muted);
+  background: transparent;
+  border-color: transparent;
+}
 .save-dialog-input {
   width: 100%;
   padding: 9px 12px;

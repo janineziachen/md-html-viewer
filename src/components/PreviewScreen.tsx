@@ -25,6 +25,7 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
   const [editMode, setEditMode] = useState<EditMode>('read')
   const [draft, setDraft] = useState(content)
   const [saveDialogOpen, setSaveDialogOpen] = useState(false)
+  const [saveStep, setSaveStep] = useState<'choose' | 'confirm-overwrite' | 'save-new'>('choose')
   const [saveTitle, setSaveTitle] = useState('')
   const [onlyHighlights, setOnlyHighlights] = useState(false)
   const [exportDialog, setExportDialog] = useState<{ open: boolean; title: string }>({ open: false, title: '' })
@@ -76,7 +77,7 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
   }
 
   function openSaveDialog() {
-    setSaveTitle('原标题（已编辑）')
+    setSaveStep('choose')
     setSaveDialogOpen(true)
   }
 
@@ -225,25 +226,6 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
           <div className="preview-content" style={{ '--doc-scale': scale } as React.CSSProperties}>
             <MarkdownRenderer content={draft} />
           </div>
-          {saveDialogOpen && (
-            <div className="save-dialog-overlay">
-              <div className="save-dialog">
-                <p className="save-dialog-title">保存方式</p>
-                <button onClick={confirmOverwrite}>覆盖原条</button>
-                <div className="save-dialog-divider">或</div>
-                <label className="save-dialog-label" htmlFor="save-title-input">另存为新条</label>
-                <input
-                  id="save-title-input"
-                  className="save-dialog-input"
-                  value={saveTitle}
-                  onChange={(e) => setSaveTitle(e.target.value)}
-                  placeholder="标题"
-                />
-                <button onClick={confirmSaveNew}>另存为新条</button>
-                <button onClick={() => setSaveDialogOpen(false)}>取消</button>
-              </div>
-            </div>
-          )}
         </div>
       )}
 
@@ -266,25 +248,6 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
           />
-          {saveDialogOpen && (
-            <div className="save-dialog-overlay">
-              <div className="save-dialog">
-                <p className="save-dialog-title">保存方式</p>
-                <button onClick={confirmOverwrite}>覆盖原条</button>
-                <div className="save-dialog-divider">或</div>
-                <label className="save-dialog-label" htmlFor="save-title-input">另存为新条</label>
-                <input
-                  id="save-title-input"
-                  className="save-dialog-input"
-                  value={saveTitle}
-                  onChange={(e) => setSaveTitle(e.target.value)}
-                  placeholder="标题"
-                />
-                <button onClick={confirmSaveNew}>另存为新条</button>
-                <button onClick={() => setSaveDialogOpen(false)}>取消</button>
-              </div>
-            </div>
-          )}
         </div>
       )}
 
@@ -320,6 +283,48 @@ export function PreviewScreen({ format, content, isBinary: _isBinary, historyId:
           <button className="back-home" onClick={onBack}>
             ← 返回主页
           </button>
+        </div>
+      )}
+
+      {saveDialogOpen && (
+        <div className="save-dialog-overlay">
+          <div className="save-dialog">
+            {saveStep === 'choose' && (
+              <>
+                <p className="save-dialog-title">保存方式</p>
+                <button onClick={() => setSaveStep('confirm-overwrite')}>覆盖原条</button>
+                <button onClick={() => {
+                  setSaveTitle('原标题 (1)')
+                  setSaveStep('save-new')
+                }}>另存为新条</button>
+                <button className="save-dialog-cancel" onClick={() => setSaveDialogOpen(false)}>取消</button>
+              </>
+            )}
+            {saveStep === 'confirm-overwrite' && (
+              <>
+                <p className="save-dialog-title">覆盖原条</p>
+                <p className="save-dialog-desc">将用当前内容直接覆盖保存，无法撤销。</p>
+                <button className="primary-btn" onClick={confirmOverwrite}>确定保存</button>
+                <button onClick={() => setSaveStep('choose')}>取消</button>
+              </>
+            )}
+            {saveStep === 'save-new' && (
+              <>
+                <p className="save-dialog-title">另存为新条</p>
+                <label className="save-dialog-label" htmlFor="save-title-input">文件名称</label>
+                <input
+                  id="save-title-input"
+                  className="save-dialog-input"
+                  value={saveTitle}
+                  onChange={(e) => setSaveTitle(e.target.value)}
+                  placeholder="原标题 (1)"
+                  autoFocus
+                />
+                <button className="primary-btn" onClick={confirmSaveNew}>确定</button>
+                <button onClick={() => setSaveStep('choose')}>取消</button>
+              </>
+            )}
+          </div>
         </div>
       )}
 
