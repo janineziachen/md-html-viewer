@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useI18n } from '../../lib/i18n'
 
 interface Props {
@@ -16,7 +16,7 @@ const MOBILE_FIT_STYLE =
 
 const DESKTOP_FIT_STYLE = '<style>img,video{max-width:100%;height:auto}</style>'
 
-function withSafeNav(html: string, desktop: boolean): string {
+export function withSafeNav(html: string, desktop: boolean): string {
   const viewport = desktop
     ? `<meta name="viewport" content="width=${DESKTOP_WIDTH}">`
     : '<meta name="viewport" content="width=device-width, initial-scale=1">'
@@ -34,6 +34,16 @@ function withSafeNav(html: string, desktop: boolean): string {
 export function HtmlRenderer({ content }: Props) {
   const { t } = useI18n()
   const [desktop, setDesktop] = useState(false)
+  const [iframeSrc, setIframeSrc] = useState<string>('')
+
+  useEffect(() => {
+    const html = withSafeNav(content, desktop)
+    const blob = new Blob([html], { type: 'text/html' })
+    const url = URL.createObjectURL(blob)
+    setIframeSrc(url)
+    return () => { URL.revokeObjectURL(url) }
+  }, [content, desktop])
+
   return (
     <div className="html-view">
       <div className="html-view-bar">
@@ -49,7 +59,7 @@ export function HtmlRenderer({ content }: Props) {
           className="html-frame"
           title="html-preview"
           sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
-          srcDoc={withSafeNav(content, desktop)}
+          src={iframeSrc || undefined}
           style={desktop ? { width: `${DESKTOP_WIDTH}px` } : undefined}
         />
       </div>
