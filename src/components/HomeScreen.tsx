@@ -29,7 +29,7 @@ export function HomeScreen({ onOpen, history, onPick, onDelete }: Props) {
   const [guideOpen, setGuideOpen] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
   const { canShow, ios, triggerPrompt, dismiss } = useInstallPrompt()
-  const [showInstallConfirm, setShowInstallConfirm] = useState(false)
+  const [showInstallGuide, setShowInstallGuide] = useState(false)
 
   function openPasted() {
     if (!text.trim()) return
@@ -128,14 +128,10 @@ export function HomeScreen({ onOpen, history, onPick, onDelete }: Props) {
       {canShow && (
         <section className="card install-banner">
           <span className="install-icon" aria-hidden>📲</span>
-          <span className="install-text">
-            {ios ? t('install.ios') : t('install.hint')}
-          </span>
-          {!ios && (
-            <button className="install-action" onClick={() => setShowInstallConfirm(true)}>
-              {t('install.action')}
-            </button>
-          )}
+          <span className="install-text">{t('install.invite')}</span>
+          <button className="install-action" onClick={() => setShowInstallGuide(true)}>
+            {t('install.howto')}
+          </button>
           <button className="install-dismiss" aria-label={t('install.dismiss')} onClick={dismiss}>
             ×
           </button>
@@ -183,29 +179,37 @@ export function HomeScreen({ onOpen, history, onPick, onDelete }: Props) {
           </ul>
         </section>
       )}
-      {showInstallConfirm && (
-        <div className="save-dialog-overlay" onClick={() => setShowInstallConfirm(false)}>
+      {showInstallGuide && (
+        <div className="save-dialog-overlay" onClick={() => setShowInstallGuide(false)}>
           <div className="save-dialog install-confirm-dialog" onClick={(e) => e.stopPropagation()}>
-            <h2 className="save-dialog-title">{t('install.confirm.title')}</h2>
-            <ul className="install-confirm-list">
-              <li className="install-confirm-item install-confirm-item--ok">
-                {t('install.confirm.p1')}
-              </li>
-              <li className="install-confirm-item install-confirm-item--ok">
-                {t('install.confirm.p2')}
-              </li>
-              <li className="install-confirm-item install-confirm-item--warn">
-                {t('install.confirm.p3')}
-              </li>
-            </ul>
-            <button
-              className="primary-btn"
-              onClick={() => { setShowInstallConfirm(false); triggerPrompt() }}
-            >
-              {t('install.confirm.ok')}
-            </button>
-            <button className="save-dialog-cancel" onClick={() => setShowInstallConfirm(false)}>
-              {t('cancel')}
+            <h2 className="save-dialog-title">{t('install.guide.title')}</h2>
+            <p className="install-guide-safe">{t('install.guide.safe')}</p>
+            <p className="install-guide-note">{t('install.guide.not-app')}</p>
+            <p className="install-guide-benefit">{t('install.guide.benefit')}</p>
+
+            <div className="install-guide-platform-block">
+              <p className="install-guide-platform">{t('install.guide.ios.label')}</p>
+              <ul className="install-guide-list">
+                <li>{t('install.guide.ios.safari')}</li>
+                <li>{t('install.guide.ios.chrome')}</li>
+              </ul>
+            </div>
+
+            <div className="install-guide-platform-block">
+              <p className="install-guide-platform">{t('install.guide.android.label')}</p>
+              <ul className="install-guide-list">
+                <li>{t('install.guide.android.chrome')}</li>
+                <li>{t('install.guide.android.samsung')}</li>
+              </ul>
+              {!ios && (
+                <button className="primary-btn install-guide-btn" onClick={() => { setShowInstallGuide(false); triggerPrompt() }}>
+                  {t('install.action')}
+                </button>
+              )}
+            </div>
+
+            <button className="save-dialog-cancel" onClick={() => setShowInstallGuide(false)}>
+              {t('install.guide.ok')}
             </button>
           </div>
         </div>

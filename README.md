@@ -17,7 +17,7 @@ Preview Markdown, JSON, HTML and PDF files in your mobile browser. A pure-fronte
 Open the URL on your phone or computer and it just works. To keep it on your phone like a real app:
 
 - **Android (Chrome):** open the link → tap the ⋮ menu (top-right) → **Add to Home screen** / **Install app**
-- **iPhone (Safari):** open the link → tap the **Share** button (bottom) → **Add to Home Screen**
+- **iPhone (Safari):** open the link → tap **···** (bottom right) → tap **Share** → scroll down → tap **Add to Home Screen**
 
 After that, a MobileMD icon appears on your home screen. Tap it to open — it works fully offline after the first install.
 
@@ -129,7 +129,7 @@ MIT
 在手机或电脑上打开上方链接即可使用。如需像真正的 App 一样安装到手机主屏：
 
 - **Android（Chrome）**：打开链接 → 点击右上角 ⋮ → **添加到主屏幕** / **安装应用**
-- **iPhone（Safari）**：打开链接 → 点击底部**分享按钮** → **添加到主屏幕**
+- **iPhone（Safari）**：打开链接 → 点击右下角 **···** → 点击「**共享**」→ 向下滑动找到「**添加到主屏幕**」→ 点击添加
 
 添加后主屏幕会出现 MobileMD 图标，点击即可打开——装好之后完全支持离线使用。
 

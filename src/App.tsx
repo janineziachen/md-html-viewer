@@ -20,6 +20,14 @@ export default function App() {
   const { t } = useI18n()
   const [current, setCurrent] = useState<Current | null>(null)
   const [history, setHistory] = useState<HistoryItem[]>([])
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    try { return localStorage.getItem('onboarding-done') !== '1' } catch { return false }
+  })
+
+  function confirmOnboarding() {
+    try { localStorage.setItem('onboarding-done', '1') } catch { /* ignore */ }
+    setShowOnboarding(false)
+  }
 
   const LAST_ID_KEY = 'lastOpenId'
 
@@ -71,6 +79,25 @@ export default function App() {
           <ThemeToggle />
         </div>
       </header>
+
+      {showOnboarding && (
+        <div className="save-dialog-overlay">
+          <div className="save-dialog onboarding-dialog">
+            <h2 className="save-dialog-title">{t('onboarding.title')}</h2>
+            <ul className="install-confirm-list">
+              <li className="install-confirm-item install-confirm-item--ok">{t('onboarding.p1')}</li>
+              <li className="install-confirm-item install-confirm-item--ok">{t('onboarding.p2')}</li>
+              <li className="install-confirm-item install-confirm-item--warn">
+                <strong>{t('onboarding.p3.title')}</strong><br />
+                {t('onboarding.p3.body')}
+              </li>
+            </ul>
+            <button className="primary-btn" onClick={confirmOnboarding}>
+              {t('onboarding.ok')}
+            </button>
+          </div>
+        </div>
+      )}
       {current ? (
         <ErrorBoundary resetKey={`${current.format}:${current.content}`} onReset={() => setCurrent(null)}>
           <PreviewScreen

@@ -880,3 +880,76 @@ select {
 .install-confirm-item--warn::before {
   content: '⚠️';
 }
+
+/* ---- Onboarding dialog ---- */
+.onboarding-dialog {
+  max-height: 92dvh;
+  overflow-y: auto;
+}
+
+/* ---- Install guide dialog ---- */
+.install-guide-benefit {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--fg);
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg));
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.install-guide-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.install-guide-platform {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.install-guide-list {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.install-guide-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+  font-style: italic;
+}
+.install-guide-platform-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.install-guide-btn {
+  margin-top: 4px;
+}
+
+.install-guide-safe {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 10px 12px 10px 36px;
+  border-radius: 8px;
+  background: color-mix(in srgb, #22c55e 10%, var(--bg));
+  position: relative;
+}
+.install-guide-safe::before {
+  content: '✅';
+  position: absolute;
+  left: 10px;
+  top: 10px;
+}
