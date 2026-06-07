@@ -72,6 +72,15 @@ const zh = {
   'json.error': '无法解析 JSON。请检查内容格式，或手动切换为其他格式查看。',
   'img.notFound': '图片未找到：',
   'img.noSrc': '(无地址)',
+  'install.action': '添加到主屏幕',
+  'install.hint': '添加到桌面，随时打开',
+  'install.ios': '点底部「分享」→「添加到主屏幕」',
+  'install.dismiss': '不了',
+  'install.confirm.title': '安装前，了解一下',
+  'install.confirm.p1': '你的文件只在你的设备上处理，MobileMD 不上传、不收集任何内容。',
+  'install.confirm.p2': 'MobileMD 本身不从网络动态加载代码，安装后功能不会在你不知情的情况下改变。',
+  'install.confirm.p3': '如果你打开来自网络的 HTML 文件，其中的脚本会在你的设备本地执行，风险与浏览器直接打开该文件相同。MobileMD 不对你自行导入的 HTML 内容的安全性负责，请确认来源可信。',
+  'install.confirm.ok': '我明白，继续安装',
 }
 
 type Key = keyof typeof zh
@@ -144,6 +153,15 @@ const en: Record<Key, string> = {
   'json.error': 'Could not parse JSON. Check the format, or switch to another format.',
   'img.notFound': 'Image not found: ',
   'img.noSrc': '(no source)',
+  'install.action': 'Add to Home Screen',
+  'install.hint': 'Add to home screen for quick access',
+  'install.ios': "Tap Share → 'Add to Home Screen'",
+  'install.dismiss': 'Not now',
+  'install.confirm.title': 'Before you install',
+  'install.confirm.p1': 'Your files are processed entirely on your device. MobileMD never uploads or collects your content.',
+  'install.confirm.p2': 'MobileMD does not load dynamic code from the internet — the app you install is exactly what you see.',
+  'install.confirm.p3': 'If you open HTML files from the internet, any scripts inside run locally on your device — the same risk as opening them in a browser. MobileMD is not responsible for the security of HTML content you import. Please verify the source.',
+  'install.confirm.ok': 'Got it, install',
 }
 
 const DICT: Record<Lang, Record<Key, string>> = { zh, en }

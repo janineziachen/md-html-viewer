@@ -21,15 +21,27 @@ export default function App() {
   const [current, setCurrent] = useState<Current | null>(null)
   const [history, setHistory] = useState<HistoryItem[]>([])
 
+  const LAST_ID_KEY = 'lastOpenId'
+
   async function refresh() {
     setHistory(await listHistory())
   }
   useEffect(() => {
-    void refresh()
+    async function init() {
+      const items = await listHistory()
+      setHistory(items)
+      const lastId = localStorage.getItem(LAST_ID_KEY)
+      if (lastId) {
+        const item = items.find((i) => i.id === lastId)
+        if (item) setCurrent({ id: item.id, format: item.format, content: item.content, isBinary: item.isBinary, title: item.title })
+      }
+    }
+    void init()
   }, [])
 
   async function open(p: OpenPayload) {
     const saved = await addHistory({ format: p.format, content: p.content, isBinary: p.isBinary, title: p.title })
+    localStorage.setItem(LAST_ID_KEY, saved.id)
     setCurrent({ id: saved.id, format: p.format, content: p.content, isBinary: p.isBinary, title: p.title })
     await refresh()
   }
@@ -67,7 +79,10 @@ export default function App() {
             isBinary={current.isBinary}
             historyId={current.id}
             docTitle={current.title}
-            onBack={() => setCurrent(null)}
+            onBack={() => {
+              localStorage.removeItem(LAST_ID_KEY)
+              setCurrent(null)
+            }}
             onChangeFormat={(f) => setCurrent({ ...current, format: f })}
             onSave={handleSave}
           />
@@ -76,9 +91,10 @@ export default function App() {
         <HomeScreen
           onOpen={open}
           history={history}
-          onPick={(item) =>
+          onPick={(item) => {
+            localStorage.setItem(LAST_ID_KEY, item.id)
             setCurrent({ id: item.id, format: item.format, content: item.content, isBinary: item.isBinary, title: item.title })
-          }
+          }}
           onDelete={async (id) => {
             await deleteHistory(id)
             await refresh()

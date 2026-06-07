@@ -3,6 +3,7 @@ import type { DocFormat, HistoryItem } from '../types'
 import { detectFromText, detectFromFilename } from '../lib/detectFormat'
 import { readTextFile, readBinaryAsDataUrl } from '../lib/readFile'
 import { useI18n } from '../lib/i18n'
+import { useInstallPrompt } from '../lib/useInstallPrompt'
 
 export interface OpenPayload {
   format: DocFormat
@@ -27,6 +28,8 @@ export function HomeScreen({ onOpen, history, onPick, onDelete }: Props) {
   const [dragOver, setDragOver] = useState(false)
   const [guideOpen, setGuideOpen] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
+  const { canShow, ios, triggerPrompt, dismiss } = useInstallPrompt()
+  const [showInstallConfirm, setShowInstallConfirm] = useState(false)
 
   function openPasted() {
     if (!text.trim()) return
@@ -122,6 +125,23 @@ export function HomeScreen({ onOpen, history, onPick, onDelete }: Props) {
         )}
       </section>
 
+      {canShow && (
+        <section className="card install-banner">
+          <span className="install-icon" aria-hidden>📲</span>
+          <span className="install-text">
+            {ios ? t('install.ios') : t('install.hint')}
+          </span>
+          {!ios && (
+            <button className="install-action" onClick={() => setShowInstallConfirm(true)}>
+              {t('install.action')}
+            </button>
+          )}
+          <button className="install-dismiss" aria-label={t('install.dismiss')} onClick={dismiss}>
+            ×
+          </button>
+        </section>
+      )}
+
       <section className="card guide-card">
         <button
           className="guide-toggle"
@@ -162,6 +182,33 @@ export function HomeScreen({ onOpen, history, onPick, onDelete }: Props) {
             ))}
           </ul>
         </section>
+      )}
+      {showInstallConfirm && (
+        <div className="save-dialog-overlay" onClick={() => setShowInstallConfirm(false)}>
+          <div className="save-dialog install-confirm-dialog" onClick={(e) => e.stopPropagation()}>
+            <h2 className="save-dialog-title">{t('install.confirm.title')}</h2>
+            <ul className="install-confirm-list">
+              <li className="install-confirm-item install-confirm-item--ok">
+                {t('install.confirm.p1')}
+              </li>
+              <li className="install-confirm-item install-confirm-item--ok">
+                {t('install.confirm.p2')}
+              </li>
+              <li className="install-confirm-item install-confirm-item--warn">
+                {t('install.confirm.p3')}
+              </li>
+            </ul>
+            <button
+              className="primary-btn"
+              onClick={() => { setShowInstallConfirm(false); triggerPrompt() }}
+            >
+              {t('install.confirm.ok')}
+            </button>
+            <button className="save-dialog-cancel" onClick={() => setShowInstallConfirm(false)}>
+              {t('cancel')}
+            </button>
+          </div>
+        </div>
       )}
     </div>
   )
