@@ -12,7 +12,7 @@ Preview Markdown, JSON, HTML and PDF files in your mobile browser. A pure-fronte
 
 **Open in Chrome or Safari — nothing to download or install:**
 
-> **https://janineziachen.github.io/md-html-viewer/**
+> **https://janineziachen.github.io/mobile-md-html/**
 
 Open the URL on your phone or computer and it just works. To keep it on your phone like a real app:
 
@@ -104,7 +104,7 @@ npm run build    # production build
 
 Pushing to `main` triggers a GitHub Actions workflow that builds and publishes to GitHub Pages automatically.
 
-> The repo must be named `md-html-viewer` to match the `base` in `vite.config.ts`. If you rename it, update `base` accordingly.
+> The repo must be named `mobile-md-html` to match the `base` in `vite.config.ts`. If you rename it, update `base` accordingly.
 
 ### Tech stack
 
@@ -124,7 +124,7 @@ MIT
 
 **在 Chrome 或 Safari 中打开，无需下载或安装：**
 
-> **https://janineziachen.github.io/md-html-viewer/**
+> **https://janineziachen.github.io/mobile-md-html/**
 
 在手机或电脑上打开上方链接即可使用。如需像真正的 App 一样安装到手机主屏：
 
@@ -216,7 +216,7 @@ npm run build    # 生产构建
 
 推送到 `main` 分支后，由 GitHub Actions 自动构建并发布到 GitHub Pages。
 
-> 仓库名需为 `md-html-viewer`，与 `vite.config.ts` 中的 `base` 一致；如改用其他仓库名，请同步修改 `base`。
+> 仓库名需为 `mobile-md-html`，与 `vite.config.ts` 中的 `base` 一致；如改用其他仓库名，请同步修改 `base`。
 
 ### 技术栈
 
